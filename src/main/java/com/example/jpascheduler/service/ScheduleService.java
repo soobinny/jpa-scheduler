@@ -1,9 +1,12 @@
 package com.example.jpascheduler.service;
 
+import com.example.jpascheduler.dto.SchedulePageResponseDto;
 import com.example.jpascheduler.dto.ScheduleRequestDto;
 import com.example.jpascheduler.dto.ScheduleResponseDto;
 import com.example.jpascheduler.entity.Schedule;
 import com.example.jpascheduler.repository.ScheduleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -60,4 +63,10 @@ public class ScheduleService {
 
         return new ScheduleResponseDto(schedule);
     }
+
+    // 페이징 조회 메서드
+    public Page<SchedulePageResponseDto> getPagedSchedules(Pageable pageable) {
+        return scheduleRepository.findAllWithCommentCount(pageable);
+    }
+
 }

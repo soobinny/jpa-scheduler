@@ -1,10 +1,15 @@
 package com.example.jpascheduler.controller;
 
+import com.example.jpascheduler.dto.SchedulePageResponseDto;
 import com.example.jpascheduler.dto.ScheduleRequestDto;
 import com.example.jpascheduler.dto.ScheduleResponseDto;
 import com.example.jpascheduler.entity.Schedule;
 import com.example.jpascheduler.repository.ScheduleRepository;
 import com.example.jpascheduler.service.ScheduleService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +48,16 @@ public class ScheduleController {
     @PutMapping
     public ScheduleResponseDto updateSchedule(@PathVariable Long id, @RequestBody ScheduleResponseDto responseDto) {
         return scheduleService.updateSchedule(id, responseDto);
+    }
+
+    //페이징
+    @GetMapping("/paged")
+    public Page<SchedulePageResponseDto> getPagedSchedules(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) { //디폴트 페이지 크기 10
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        return scheduleService.getPagedSchedules(pageable);
     }
 
 
