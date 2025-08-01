@@ -8,6 +8,7 @@ import com.example.jpascheduler.repository.ScheduleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -68,5 +69,16 @@ public class ScheduleService {
     public Page<SchedulePageResponseDto> getPagedSchedules(Pageable pageable) {
         return scheduleRepository.findAllWithCommentCount(pageable);
     }
+
+    // 삭제 : 영속성 전이
+    @Transactional
+    public void deleteSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id=" + id));
+
+        scheduleRepository.delete(schedule);  // 연관 함께 삭제됨
+    }
+
+
 
 }
