@@ -54,35 +54,33 @@
 
 ```
 jpa-scheduler/
-├── controller/
-│   ├── ScheduleController.java
-│   └── UserController.java
+├── controller/                            # 클라이언트 요청을 처리하는 API 컨트롤러 계층
+│   ├── ScheduleController.java            # 일정 등록, 조회, 수정, 삭제, 담당자 배정 처리
+│   └── UserController.java                # 유저 등록, 조회, 삭제 처리
 │
-├── dto/
-│   ├── AssignedUserDto.java
-│   ├── SchedulePageResponseDto.java
-│   ├── ScheduleRequestDto.java
-│   ├── ScheduleResponseDto.java
-│   ├── UserRequestDto.java
-│   └── UserResponseDto.java
+├── dto/                                   # 요청/응답 데이터 전달 객체 (DTO)
+│   ├── ScheduleRequestDto.java            # 일정 등록 및 수정 요청용 DTO
+│   ├── ScheduleResponseDto.java           # 일정 단건 조회 응답 DTO
+│   ├── SchedulePageResponseDto.java       # 일정 목록 조회 응답 DTO (댓글 수 포함)
+│   ├── UserRequestDto.java                # 유저 등록 및 수정 요청용 DTO
+│   ├── UserResponseDto.java               # 유저 조회 응답 DTO
+│   └── AssignedUserDto.java               # 일정 단건 조회 시 담당자 정보 DTO
 │
-├── entity/
-│   ├── Comment.java
-│   ├── Schedule.java
-│   ├── User.java
-│   └── UserSchedule.java
+├── entity/                                # JPA 엔티티 클래스 (DB 테이블 매핑)
+│   ├── Schedule.java                      # 일정 엔티티. User와 N:1, Comment와 1:N
+│   ├── User.java                          # 유저 엔티티. Schedule과 1:N, UserSchedule과 1:N
+│   ├── UserSchedule.java                  # 유저-일정 N:M 관계용 중간 엔티티
+│   └── Comment.java                       # 댓글 엔티티. 일정과 N:1 관계
 │
-├── repository/
-│   ├── CommentRepository.java
-│   ├── ScheduleRepository.java
-│   ├── UserRepository.java
-│   └── UserScheduleRepository.java
+├── repository/                            # 데이터베이스 접근 인터페이스 (JPA Repository)
+│   ├── ScheduleRepository.java            # 일정 DB 접근용 레포지토리
+│   ├── UserRepository.java                # 유저 DB 접근용 레포지토리
+│   └── UserScheduleRepository.java        # UserSchedule 중간 엔티티 접근용 레포지토리
 │
-├── service/
-│   ├── ScheduleService.java
-│   └── UserService.java
-│
-└── JpaschedulerApplication.java // gitignore
+└── service/                               # 핵심 비즈니스 로직 계층
+    ├── ScheduleService.java               # 일정 등록, 수정, 삭제, 담당자 배정 등 핵심 로직 처리
+    └── UserService.java                   # 유저 등록, 조회, 삭제 등 핵심 로직 처리
+
 
 ```
 ---
