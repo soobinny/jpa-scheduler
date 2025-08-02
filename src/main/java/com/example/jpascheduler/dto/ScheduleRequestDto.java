@@ -1,10 +1,14 @@
 package com.example.jpascheduler.dto;
 
+import lombok.Getter;
+
+@Getter
 public class ScheduleRequestDto {
 
     private String username;
     private String title;
     private String content;
+    private Long userId;
 
     //기본 생성자
     public ScheduleRequestDto() {}

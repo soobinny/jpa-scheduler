@@ -68,4 +68,11 @@ public class ScheduleController {
         return ResponseEntity.ok("일정이 삭제되었습니다."); // 200 ok
     }
 
+    //담당자 api 등록
+    @PostMapping("/{scheduleId}/assign/{userId}")
+    public ResponseEntity<String> assignUserToSchedule(@PathVariable Long scheduleId, @PathVariable Long userId) {
+        scheduleService.assignUserToSchedule(scheduleId, userId);
+        return ResponseEntity.ok("담당자가 등록되었습니다.");
+    }
+
 }

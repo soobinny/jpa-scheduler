@@ -4,7 +4,11 @@ import com.example.jpascheduler.dto.SchedulePageResponseDto;
 import com.example.jpascheduler.dto.ScheduleRequestDto;
 import com.example.jpascheduler.dto.ScheduleResponseDto;
 import com.example.jpascheduler.entity.Schedule;
+import com.example.jpascheduler.entity.User;
+import com.example.jpascheduler.entity.UserSchedule;
 import com.example.jpascheduler.repository.ScheduleRepository;
+import com.example.jpascheduler.repository.UserRepository;
+import com.example.jpascheduler.repository.UserScheduleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,22 +23,28 @@ public class ScheduleService {
 
     // Repository 의존성 주입 연결
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final UserScheduleRepository userScheduleRepository;
 
     //생성자
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository,
+                           UserRepository userRepository,
+                           UserScheduleRepository userScheduleRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
+        this.userScheduleRepository = userScheduleRepository;
     }
 
     //일정 생성 메서드
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto ) {
-        Schedule schedule = new Schedule(
-                requestDto.getUsername(),
-                requestDto.getTitle(),
-                requestDto.getContent()
-        );
+    @Transactional
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + dto.getUserId()));
 
-        Schedule saved = scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(saved);
+        Schedule schedule = new Schedule(dto.getTitle(), dto.getContent(), user);
+        scheduleRepository.save(schedule);
+
+        return new ScheduleResponseDto(schedule);
     }
 
     // 전체 일정 조회 메서드
@@ -77,6 +87,19 @@ public class ScheduleService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id=" + id));
 
         scheduleRepository.delete(schedule);  // 연관 함께 삭제됨
+    }
+
+    //담당자 배정 메서드
+    @Transactional
+    public void assignUserToSchedule(Long scheduleId, Long userId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id=" + scheduleId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다. id=" + userId));
+
+        UserSchedule userSchedule = new UserSchedule(user, schedule);
+        userScheduleRepository.save(userSchedule);
     }
 
 

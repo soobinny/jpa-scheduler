@@ -30,10 +30,12 @@ public class Schedule {
     private LocalDateTime updatedAt; // 수정 시간
 
     //생성자
-    public Schedule(String username, String title, String content) {
-        this.username = username;
+    public Schedule(String title, String content, User creator) {
         this.title = title;
         this.content = content;
+        this.creator = creator;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     //기본 생성자 -> JPA는 반드시 기본 생성자가 필요함(public or protect)
@@ -50,4 +52,12 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    //하나의 유저가 여러 개의 일정 작성
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
+    //양방향 연관관계
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<UserSchedule> assignedUsers = new ArrayList<>();
 }
