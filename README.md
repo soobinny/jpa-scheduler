@@ -1,4 +1,4 @@
-# jpa-scheduler
+# Jpa-Scheduler
 
 - 언어: Java
 - 프레임워크: Spring Boot
